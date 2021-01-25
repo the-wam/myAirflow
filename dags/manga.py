@@ -9,9 +9,7 @@ from airflow.utils.dates import days_ago
 
 from datetime import datetime, timedelta
 
-from code.extract import myextract
-from code.transforme import mytransforme
-from code.load import myload
+import logging
 
 default_args = {
     'owner': "airflow",
@@ -32,21 +30,22 @@ dag = DAG(
 )
 
 
-# def myextract():
-#     print('extract')
-#     return 0
+def myextract():
+    logging.info('extract')
+    return 0
 
 run_etl = PythonOperator(
     task_id="myextract",
-    python_callable=extract,
+    python_callable=myextract,
     dag=dag
     )
 
 
-# def mytransforme():
+def mytransforme():
 
-#     res = random.choice(["continue", "Stop"])
-#     return res
+    res = random.choice(["continue", "Stop"])
+    logging.info(res)
+    return res
 
 
 transf = BranchPythonOperator(
@@ -59,9 +58,9 @@ transf = BranchPythonOperator(
 continue1 = DummyOperator(task_id='continue', dag=dag)
 Stop = DummyOperator(task_id='stop', dag=dag)
 
-# def myload():
-#     print("load")
-#     return 2
+def myload():
+    logging.info("load")
+    return 2
 
 
 run_test = PythonOperator(
