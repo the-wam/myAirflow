@@ -2,7 +2,7 @@ import glob
 
 from utile import loadJson, dumpJson, uniqueName
 
-envPath = "dags/code/"
+envPath = ""
 
 def mytransforme():
 

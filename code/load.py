@@ -7,15 +7,18 @@ from pymongo import MongoClient
 
 import glob
 
-from code.uttil import loadJson
+from utile import loadJson
 
-envPath = "dags/code/"
-
-client = MongoClient('mongodb://localhost:27017/')
-db = client.test_database
-collection = db.test_collection
-collection.find_one()
-manga = db.manga
+envPath = ""
+try :
+    client = MongoClient('mongodb://localhost:27017/')
+    db = client.test_database
+    collection = db.test_collection
+    collection.find_one()
+    manga = db.manga
+    print("connection OK")
+except :
+    print("ca marche pas !")
 
 def createManga(mangaTitle):
     """
@@ -55,7 +58,7 @@ def updateChapiter(mangaTitle, chapNum, chapTitle, chapDate, chapURL):
 
 def ControleUpdateChapiter(mangaTitle, chapNum, chapTitle, chapDate, chapURL):
     """
-        return 0 if 
+        
     """
     currentManga = readManga(mangaTitle)
     
@@ -98,7 +101,12 @@ def myload():
     # load path 
     listJson = sorted(glob.glob(f"{envPath}data/toAdd/*.json"), reverse=True)
 
+    if not listJson:
+        print("pas de fichier")
+        return 0
+
     data = loadJson(listJson[0])
+    
 
     for row in data:
         ControleUpdateChapiter(

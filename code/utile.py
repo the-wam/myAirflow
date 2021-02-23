@@ -5,7 +5,7 @@ from bson import json_util
 # manipulation des dates
 from datetime import datetime
 
-envPath = "dags/code/"
+envPath = ""
 
 def uniqueName(extention="csv"):
     """

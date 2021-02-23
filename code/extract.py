@@ -1,3 +1,4 @@
+
 # création de requête
 import requests
 
@@ -21,9 +22,9 @@ import json
 from bson import json_util
 
 # 
-from code.uttil import uniqueName, saveRawData
+from utile import uniqueName, saveRawData
 
-envPath = "dags/code/"
+envPath = ""
 
 # fonction de nettoyage pour les dates avec datetime
 def cleaningDate(dateRaw):
