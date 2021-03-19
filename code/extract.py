@@ -1,4 +1,3 @@
-
 # création de requête
 import requests
 
@@ -21,7 +20,7 @@ import pandas as pd
 import json
 from bson import json_util
 
-# 
+#
 from utile import uniqueName, saveRawData
 
 envPath = ""
@@ -34,13 +33,14 @@ def cleaningDate(dateRaw):
     >>> cleaningDate("bonjour")
     'bonjour'
     """
-    
+
     try:
-        dateClean = datetime.strptime(dateRaw[:-6], '%a, %d %b %Y %H:%M:%S')
+        dateClean = datetime.strptime(dateRaw[:-6], "%a, %d %b %Y %H:%M:%S")
         return dateClean
-    except ValueError :
-        
+    except ValueError:
+
         return dateRaw
+
 
 # fonction de nettoyage pour le titre du manga et le numéro du chapitre avec des regex
 def cleanTitreAndNumber(titleNumberChapiterRaw):
@@ -50,18 +50,22 @@ def cleanTitreAndNumber(titleNumberChapiterRaw):
     """
     if titleNumberChapiterRaw:
         number = re.findall("\d{3,}", titleNumberChapiterRaw)[-1]
-        title = titleNumberChapiterRaw.replace("Scan - ", "").replace(f" Chapitre {number}", "")
+        title = titleNumberChapiterRaw.replace("Scan - ", "").replace(
+            f" Chapitre {number}", ""
+        )
         return title, int(number)
 
-# Function to clean the title 
+
+# Function to clean the title
 def cleaningChapiterTitle(chapiterTitleRaw):
     """
     return the chapiter's title
     """
-    soup = BeautifulSoup(chapiterTitleRaw, 'html.parser')
+    soup = BeautifulSoup(chapiterTitleRaw, "html.parser")
     title = soup.findAll("a")[-1].string
-    
+
     return title
+
 
 def myextract():
     # request to retrieve raw data
@@ -72,8 +76,8 @@ def myextract():
     # save raw data
     saveRawData(data)
 
-    # extract 
-    mangasRawList = data['rss']['channel']['item']
+    # extract
+    mangasRawList = data["rss"]["channel"]["item"]
 
     dataCleanJson = []
     for mangaRow in mangasRawList:
@@ -82,15 +86,17 @@ def myextract():
         link = mangaRow["link"]
         chapTitle = cleaningChapiterTitle(mangaRow["description"])
         chapDate = cleaningDate(mangaRow["pubDate"])
-        
+
         # add
-        dataCleanJson.append({
-            "mangaTitle": mangaTitle,
-            "chapiterNumber": chapiterNumber,
-            "chapTitle": chapTitle,
-            "link": link,
-            "chapDate": chapDate
-        })
+        dataCleanJson.append(
+            {
+                "mangaTitle": mangaTitle,
+                "chapiterNumber": chapiterNumber,
+                "chapTitle": chapTitle,
+                "link": link,
+                "chapDate": chapDate,
+            }
+        )
 
     # sauvegarde des données au format JSON
     with open(f"{envPath}data/json/{uniqueName('json')}", "w") as f:
