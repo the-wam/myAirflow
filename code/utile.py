@@ -6,42 +6,48 @@ import glob
 # manipulation des dates
 from datetime import datetime
 
-envPath = ""
+env_path = ""
 
 
-def uniqueName(extention="csv"):
+def unique_name(extention="csv"):
     """
     return a name unqiue for a csv file
     with a timestamp
     unqiue por seconde
     """
-    nameEnding = f"manga.{extention}"
+    name_ending = f"manga.{extention}"
     now = datetime.now()
     timestamp = int(datetime.timestamp(now))
-    name = str(timestamp) + "_" + nameEnding
+    name = str(timestamp) + "_" + name_ending
     return name
 
 
-def saveRawData(data):
+def save_raw_data(data):
     """
         Dump a dictionary to json file
     """
-    with open(f'{envPath}data/raw/{uniqueName("json")}', "w") as f:
+    with open(f'{env_path}data/raw/{unique_name("json")}', "w") as f:
         json.dump(data, f)
 
 
-def dumpJson(path, myData):
+def dump_json(path, my_data):
     """
         Dump a dictionary
+
+        parametter : path of folder, list of dictionary
+
+        return : Nothing
     """
 
     with open(path, "w") as f:
-        json.dump(myData, f)
+        json.dump(my_data, f)
 
 
-def loadJson(path):
+def load_json(path):
     """
         Load a json file
+
+        parametter : path of folder
 
         return : dictionary
     """
@@ -51,7 +57,7 @@ def loadJson(path):
     return loaded_dictionaries
 
 
-def loadLastJson(path, number):
+def load_last_json(path, number):
     """
         load last json file
 
@@ -60,9 +66,9 @@ def loadLastJson(path, number):
         return : list of dictionary
     """
 
-    listPathJsonFile = sorted(glob.glob(f"{path}/*.json"), reverse=True)
+    list_path_json_file = sorted(glob.glob(f"{path}/*.json"), reverse=True)
 
     data = []
 
-    for one_path in listPathJsonFile[:number]:
-        data.append(loadJson(one_path))
+    for one_path in list_path_json_file[:number]:
+        data.append(load_json(one_path))

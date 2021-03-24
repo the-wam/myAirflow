@@ -21,12 +21,12 @@ import json
 from bson import json_util
 
 #
-from utile import uniqueName, saveRawData
+from utile import unique_name, save_raw_data
 
 envPath = ""
 
 # fonction de nettoyage pour les dates avec datetime
-def cleaningDate(dateRaw):
+def cleaning_date(date_raw):
     """
     >>> cleaningDate("Fri, 04 Dec 2020 08:22:51 +0100")
     datetime.datetime(2020, 12, 4, 8, 22, 51)
@@ -35,73 +35,73 @@ def cleaningDate(dateRaw):
     """
 
     try:
-        dateClean = datetime.strptime(dateRaw[:-6], "%a, %d %b %Y %H:%M:%S")
-        return dateClean
+        date_clean = datetime.strptime(date_raw[:-6], "%a, %d %b %Y %H:%M:%S")
+        return date_clean
     except ValueError:
 
-        return dateRaw
+        return date_raw
 
 
 # fonction de nettoyage pour le titre du manga et le numéro du chapitre avec des regex
-def cleanTitreAndNumber(titleNumberChapiterRaw):
+def clean_titre_and_number(titlen_number_chapiter_raw):
     """
     >>> cleanTitreAndNumber('Scan - Jujutsu Kaisen Chapitre 132')
     ('Jujutsu Kaisen', 132)
     """
-    if titleNumberChapiterRaw:
-        number = re.findall("\d{3,}", titleNumberChapiterRaw)[-1]
-        title = titleNumberChapiterRaw.replace("Scan - ", "").replace(
+    if titlen_number_chapiter_raw:
+        number = re.findall("\d{3,}", titlen_number_chapiter_raw)[-1]
+        title = titlen_number_chapiter_raw.replace("Scan - ", "").replace(
             f" Chapitre {number}", ""
         )
         return title, int(number)
 
 
 # Function to clean the title
-def cleaningChapiterTitle(chapiterTitleRaw):
+def cleaning_chapiter_title(chapiter_title_raw):
     """
     return the chapiter's title
     """
-    soup = BeautifulSoup(chapiterTitleRaw, "html.parser")
+    soup = BeautifulSoup(chapiter_title_raw, "html.parser")
     title = soup.findAll("a")[-1].string
 
     return title
 
 
-def myextract():
+def my_extract():
     # request to retrieve raw data
     url = "https://scantrad.net/rss/"
     response = requests.get(url)
     data = xmltodict.parse(response.content)
 
     # save raw data
-    saveRawData(data)
+    save_raw_data(data)
 
     # extract
-    mangasRawList = data["rss"]["channel"]["item"]
+    mangas_raw_list = data["rss"]["channel"]["item"]
 
-    dataCleanJson = []
-    for mangaRow in mangasRawList:
+    data_clean_json = []
+    for manga_row in mangas_raw_list:
         # cleanning
-        mangaTitle, chapiterNumber = cleanTitreAndNumber(mangaRow["title"])
-        link = mangaRow["link"]
-        chapTitle = cleaningChapiterTitle(mangaRow["description"])
-        chapDate = cleaningDate(mangaRow["pubDate"])
+        manga_title, chapiter_number = clean_titre_and_number(manga_row["title"])
+        link = manga_row["link"]
+        chap_title = cleaning_chapiter_title(manga_row["description"])
+        chap_date = cleaning_date(manga_row["pubDate"])
 
         # add
-        dataCleanJson.append(
+        data_clean_json.append(
             {
-                "mangaTitle": mangaTitle,
-                "chapiterNumber": chapiterNumber,
-                "chapTitle": chapTitle,
+                "mangaTitle": manga_title,
+                "chapiterNumber": chapiter_number,
+                "chapTitle": chap_title,
                 "link": link,
-                "chapDate": chapDate,
+                "chapDate": chap_date,
             }
         )
 
     # sauvegarde des données au format JSON
-    with open(f"{envPath}data/json/{uniqueName('json')}", "w") as f:
-        json.dump(dataCleanJson, f, default=json_util.default)
+    with open(f"{envPath}data/json/{unique_name('json')}", "w") as f:
+        json.dump(data_clean_json, f, default=json_util.default)
 
 
 if __name__ == "__main__":
-    myextract()
+    my_extract()

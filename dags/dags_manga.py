@@ -17,9 +17,9 @@ import sys
 sys.path.insert(0, "../code/")
 
 # import my package
-from extract import myextract
-from transforme import mytransforme
-from load import myload
+from extract import my_extract
+from transforme import my_transforme
+from load import my_load
 
 
 default_args = {
@@ -41,17 +41,17 @@ dag = DAG(
 )
 
 
-run_etl = PythonOperator(task_id="myextract", python_callable=myextract, dag=dag)
+run_etl = PythonOperator(task_id="myextract", python_callable=my_extract, dag=dag)
 
 transf = BranchPythonOperator(
-    task_id="branching", python_callable=mytransforme, provide_context=True, dag=dag
+    task_id="branching", python_callable=my_transforme, provide_context=True, dag=dag
 )
 
 continue1 = DummyOperator(task_id="continue", dag=dag)
 Stop = DummyOperator(task_id="stop", dag=dag)
 
 
-loadData = PythonOperator(task_id="loadData", python_callable=myload, dag=dag)
+loadData = PythonOperator(task_id="loadData", python_callable=my_load, dag=dag)
 
 
 alertLoic = EmailOperator(
